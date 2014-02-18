@@ -1,0 +1,14 @@
+{
+    "name": "overlay",
+    "version": "1.0.0",
+    "build": {
+        "output": {
+            "overlay.js": ["*.js"]
+        },
+        "alias": {
+            "widget": "matcha/widget/1.0.0/widget",
+            "position": "matcha/position/1.0.0/position",
+            "iframeshim": "matcha/iframeshim/1.0.0/iframeshim"
+        }
+    }
+}
