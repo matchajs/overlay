@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="gbk">
+<title>Overlay examples - 堆放覆盖浮层</title>
+<link charset="utf-8" rel="stylesheet" href="http://www.poco.cn/css_common/normalize/3.0.0/normalize.css">
+<style type="text/css">
+.example {
+    position: relative;
+    _zoom: 1;
+}
+.needs-shim {
+    width: 100%;
+}
+.example-overlay {
+    line-height: 100px;
+    background-color: #ECEFFB;
+    border: 1px solid #9EA8C6;
+    border-radius: 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+.example-overlay em {
+    color: #FF8800;
+    font-weight: 700;
+}
+</style>
+<script src="http://cb.poco.cn/seajs/2.1.1/sea.js"></script>
+<!--[if lt IE 9]>
+<script src="http://cb.poco.cn/utility/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<script>
+seajs.config({
+    paths: {
+        utility: 'http://cb.poco.cn/utility',
+        matcha: 'http://cb.poco.cn/matcha'
+    },
+    alias:{
+        jquery: 'utility/jquery/1.8.3/jquery',
+        'jquery-debug': 'utility/jquery/1.8.3/jquery-debug',
+
+        widget: 'matcha/widget/1.0.0/widget',
+        position: 'matcha/position/1.0.0/position',
+        iframeshim: 'matcha/iframeshim/1.0.0/iframeshim'
+    },
+    charset: 'utf-8'
+});
+</script>
+</head>
+
+<body>
+    <div class="global-container">
+        <section class="example-content">
+            <h3 id="堆放覆盖浮层">堆放覆盖浮层</h3>
+            <div id="example" class="example">
+                <div class="filler">
+                    <p>《宿業師山房待丁大不至》</p>
+                    <p>作者：孟浩然</p>
+                    <p>夕陽度西嶺，群壑倏已暝。</p>
+                    <p>松月生夜涼，風泉滿清聽。</p>
+                    <p>樵人歸盡欲，煙鳥棲初定。</p>
+                    <p>之子期宿來，孤琴候蘿徑。</p>
+                    </p>
+                    <select class="needs-shim">
+                        <option>万恶的IE6</option>
+                    </select>
+                    <p>生于忧患，死于安乐</p>
+                    <p>舜发于畎亩之中，傅说举于版筑之闲，胶鬲举于鱼盐之中，管夷吾举于士，孙叔敖举于海，百里奚举于市。</p>
+                    <p>故天将降大任于是人也，必先苦其心志，劳其筋骨，饿其体肤，空乏其身，行拂乱其所为，所以动心忍性，曾益其所不能。</p>
+                    <p>人恒过，然后能改；困于心，衡于虑，而后作；征于色，发于声，而后喻。</p>
+                    <p>入则无法家拂士，出则无敌国外患者，国恒亡。</p>
+                    <p>然后知生于忧患而死于安乐也。</p>
+                </div>
+            </div>
+            <script>
+            seajs.use(['jquery', '../src/overlay'], function($, Overlay) {
+                var toNumber = function(n) {
+                    return parseInt(n, 10) || 0;
+                };
+                var getOverlayXY = function(xy, i) {
+                    return (xy[0] + i * 50) + ' ' + (xy[1] + i * 50);
+                }
+
+                var xy = [30, 30];
+                var n = 6;
+                var ovrXY, ovrZIndex;
+                for (var i = 0; i < n; ++i) {
+                    ovrXY = getOverlayXY(xy, i);
+                    ovrZIndex = i+1;
+
+                    var o1 = new Overlay({
+                        width: 100,
+                        height: 100,
+                        className: 'example-overlay',
+                        template: '<h<div class="conetnt"><em>' + ovrZIndex + '</em> = z-index</div>',
+                        blurHide: false,
+                        zIndex: ovrZIndex,
+                        parentNode: '#example',
+                        align: {
+                            elementPos: '0 0',
+                            targetNode: '#example',
+                            targetPos: ovrXY
+                        }
+                    }).show();
+                }
+            });
+            </script>
+        </section>
+    </div>
+</body>
+</html>

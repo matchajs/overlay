@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="gbk">
+<title>Overlay examples - 基于XY轴定位</title>
+<link charset="utf-8" rel="stylesheet" href="http://www.poco.cn/css_common/normalize/3.0.0/normalize.css">
+<style type="text/css">
+.example {
+    position: relative;
+    _zoom: 1;
+}
+#x, #y {
+    width: 40px;
+}
+.needs-shim {
+    width: 100%;
+}
+.example-overlay {
+    width: 148px;
+    height: 148px;
+    line-height: 148px;
+    background-color: #ECEFFB;
+    border: 1px solid #9EA8C6;
+    border-radius: 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+</style>
+<script src="http://cb.poco.cn/seajs/2.1.1/sea.js"></script>
+<!--[if lt IE 9]>
+<script src="http://cb.poco.cn/utility/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<script>
+seajs.config({
+    paths: {
+        utility: 'http://cb.poco.cn/utility',
+        matcha: 'http://cb.poco.cn/matcha'
+    },
+    alias:{
+        jquery: 'utility/jquery/1.8.3/jquery',
+        'jquery-debug': 'utility/jquery/1.8.3/jquery-debug',
+
+        widget: 'matcha/widget/1.0.0/widget',
+        position: 'matcha/position/1.0.0/position',
+        iframeshim: 'matcha/iframeshim/1.0.0/iframeshim-debug'
+    },
+    charset: 'utf-8'
+});
+</script>
+</head>
+
+<body>
+    <div class="global-container">
+        <section class="example-content">
+            <h3 id="基于XY轴定位">基于XY轴定位</h3>
+            <div id="example" class="example">
+                <label>X: <input type="text" id="x" value="83"></label>
+                <label>Y: <input type="text" id="y" value="20"></label>
+                <button type="button" id="move">移动</button>
+                <button type="button" id="hide">隐藏</button>
+                <button type="button" id="show">显示</button>
+                <p class="filler">
+                    <select class="needs-shim">
+                        <option>万恶的IE6</option>
+                    </select>
+                    生于忧患，死于安乐<br><br>
+                    舜发于畎亩之中，傅说举于版筑之闲，胶鬲举于鱼盐之中，管夷吾举于士，孙叔敖举于海，百里奚举于市。故天将降大任于是人也，必先苦其心志，劳其筋骨，饿其体肤，空乏其身，行拂乱其所为，所以动心忍性，曾益其所不能。人恒过，然后能改；困于心，衡于虑，而后作；征于色，发于声，而后喻。入则无法家拂士，出则无敌国外患者，国恒亡。然后知生于忧患而死于安乐也。
+                </p>
+            </div>
+            <script>
+            seajs.use(['jquery', '../src/overlay'], function($, Overlay) {
+                var toNumber = function(n) {
+                    return parseInt(n, 10) || 0;
+                };
+                var getXY = function() {
+                    return toNumber($('#x').val()) + ' ' + toNumber($('#y').val());
+                };
+
+                var o1 = new Overlay({
+                    id: 'example-overlay',
+                    className: 'example-overlay',
+                    template: '<div>Overlay Content</div>',
+                    blurHide: false,
+                    parentNode: '#example',
+                    align: {
+                        elementPos: '0 0',
+                        targetNode: '#example',
+                        targetPos: getXY()
+                    }
+                }).show();
+
+                $('#move').click(function() {
+                    o1.set('align', {
+                        elementPos: '0 0',
+                        targetNode: '#example',
+                        targetPos: getXY()
+                    });
+                });
+                $('#show').click(function() {
+                    o1.show();
+                });
+                $('#hide').click(function() {
+                    o1.hide();
+                });
+            });
+            </script>
+        </section>
+    </div>
+</body>
+</html>

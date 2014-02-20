@@ -10,7 +10,7 @@ define(function(require, exports, module) {
             width: null, // 浮层宽度
             height: null, // 浮层高度
             visible: false, // 显示状态
-            blurHide: true, // 失去焦点时，是否自动隐藏
+            blurHide: false, // 失去焦点时，是否自动隐藏
             zIndex: 99,
 
             // 定位配置
@@ -120,6 +120,12 @@ define(function(require, exports, module) {
                 });
             }
 
+            var overlayWidth = self.get('width');
+            overlayWidth && self.$el.css('width', overlayWidth);
+
+            var overlayHeight = self.get('height');
+            overlayHeight && self.$el.css('height', overlayHeight);
+
             return self;
         },
 
@@ -150,7 +156,7 @@ define(function(require, exports, module) {
 
             self.set('visible', false);
 
-            self._iframeShim.position();
+            self._iframeShim.hide();
 
             return self;
         },

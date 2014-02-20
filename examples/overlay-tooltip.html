@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="gbk">
+<title>Overlay examples - Tooltip</title>
+<link charset="utf-8" rel="stylesheet" href="http://www.poco.cn/css_common/normalize/3.0.0/normalize.css">
+<style type="text/css">
+.example {
+    position: relative;
+    _zoom: 1;
+}
+
+#mini-cart {
+    width: 270px;
+}
+#mini-cart .handle {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    padding: 0 15px;
+    width: 240px;
+    height: 30px;
+    line-height: 30px;
+    color: #fff;
+    background: #f40;
+    font-size: 12px;
+    text-align: right;
+    cursor: pointer;
+}
+#mini-cart .content {
+    width: 270px;
+    height: 30px;
+    line-height: 30px;
+}
+#mini-cart .msg {
+    width: 268px;
+    border: 1px solid #D7D7D7;
+    border-bottom: 0;
+    background-color: #EAEAEA;
+    font-size: 12px;
+    color: #999;
+
+    text-align: center;
+}
+</style>
+<script src="http://cb.poco.cn/seajs/2.1.1/sea.js"></script>
+<!--[if lt IE 9]>
+<script src="http://cb.poco.cn/utility/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<script>
+seajs.config({
+    paths: {
+        utility: 'http://cb.poco.cn/utility',
+        matcha: 'http://cb.poco.cn/matcha'
+    },
+    alias:{
+        jquery: 'utility/jquery/1.8.3/jquery',
+        'jquery-debug': 'utility/jquery/1.8.3/jquery-debug',
+
+        widget: 'matcha/widget/1.0.0/widget',
+        position: 'matcha/position/1.0.0/position',
+        iframeshim: 'matcha/iframeshim/1.0.0/iframeshim'
+    },
+    charset: 'utf-8'
+});
+</script>
+</head>
+
+<body>
+    <div class="global-container">
+        <section class="example-content">
+            <h3 id="工具条提示">工具条提示</h3>
+            <div class="example">
+                <div id="mini-cart">
+                    <div class="content"></div>
+                    <a class="handle" id="example-handle">购物车</a>
+                </div>
+            </div>
+            <script>
+            seajs.use(['jquery', '../src/overlay'], function($, Overlay) {
+                var o1 = new Overlay({
+                    id: 'example-overlay-menu',
+                    template: '<div class="msg">你还没加任何商品进购物车，快去逛逛吧~</div>',
+                    parentNode: '#mini-cart .content',
+                    align: {
+                        elementPos: '0 100%',
+                        targetNode: '#example-handle',
+                        targetPos: '0 0'
+                    }
+                });
+
+                $('#mini-cart').mouseenter(function() {
+                    o1.show();
+                }).mouseleave(function() {
+                    o1.hide();
+                });
+            });
+            </script>
+        </section>
+    </div>
+</body>
+</html>
