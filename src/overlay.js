@@ -10,7 +10,7 @@ define(function(require, exports, module) {
             width: null, // 浮层宽度
             height: null, // 浮层高度
             visible: false, // 显示状态
-            blurHide: false, // 失去焦点时，是否自动隐藏
+            blurHide: true, // 失去焦点时，是否自动隐藏
             zIndex: 99,
 
             // 定位配置
@@ -53,15 +53,38 @@ define(function(require, exports, module) {
         _setPosition: function() {
             var self = this;
 
-            var align = self.get('align');
+            // 不在文档流中，定位无效
+            if (!$.contains(document.documentElement, self.el)) {
+                return;
+            }
 
-            if (!!align) {
-                Position({
-                    element: self.$el,
-                    pos: align.elementPos
-                }, {
-                    element: align.targetNode,
-                    pos: align.targetPos
+            var align = self.get('align');
+            if (!align) {
+                return;
+            }
+
+            var isHidden = self.$el.css('display') === 'none';
+
+            // 在定位时，为避免元素高度不定，先显示出来
+            if (isHidden) {
+                self.$el.css({
+                    visibility: 'hidden',
+                    display: 'block'
+                });
+            }
+
+            Position({
+                element: self.$el,
+                pos: align.elementPos
+            }, {
+                element: align.targetNode,
+                pos: align.targetPos
+            });
+
+            if (isHidden) {
+                self.$el.css({
+                    visibility: '',
+                    display: 'none'
                 });
             }
 
@@ -78,28 +101,40 @@ define(function(require, exports, module) {
             Overlay.allOverlays.push(this);
         },
 
+        _blurHide: function(arr) {
+            var self = this;
+
+            arr = $.makeArray(arr);
+            arr.push(self.$el);
+
+            self._relativeElements = arr;
+        },
+
+        _onChangeWidth: function(val) {
+            this.$el.css('width', val);
+        },
+
+        _onChangeHeight: function(val) {
+            this.$el.css('height', val);
+        },
+
+        _onChangeZIndex: function(val) {
+            this.$el.css('zIndex', val);
+        },
+
+        _onChangeAlign: function() {
+            this._setPosition();
+        },
+
+        _onChangeVisible: function(val) {
+            this.$el[val ? 'show' : 'hide']();
+        },
+
         setup: function() {
             var self = this;
 
             self._setupShim(); // 加载 iframe 遮罩层并与 overlay 保持同步
             self._setupResize();// 窗口resize时，重新定位浮层
-
-            // 属性更新操作
-            self.on('change:width', function(model, val) {
-                self.$el.css('width', val);
-            });
-            self.on('change:height', function(model, val) {
-                self.$el.css('height', val);
-            });
-            self.on('change:zIndex', function(model, val) {
-                self.$el.css('zIndex', val);
-            });
-            self.on('change:align', function() {
-                self._setPosition();
-            });
-            self.on('change:visible', function(model, val) {
-                self.$el[val ? 'show' : 'hide']();
-            });
         },
 
         /**
@@ -119,12 +154,6 @@ define(function(require, exports, module) {
                     top: '-9999px'
                 });
             }
-
-            var overlayWidth = self.get('width');
-            overlayWidth && self.$el.css('width', overlayWidth);
-
-            var overlayHeight = self.get('height');
-            overlayHeight && self.$el.css('height', overlayHeight);
 
             return self;
         },
@@ -189,9 +218,29 @@ define(function(require, exports, module) {
     module.exports = Overlay;
 
     // 浮层隐藏
-    $(document).on('mousedown', function() {
+    $(document).on('mousedown', function(event) {
         eachOverlays(function(instance) {
-            instance.get('blurHide') && instance.hide();
+            // 当实例为 空 或 隐藏 或 blurHide不启用 时，不处理
+            if (!instance || !instance.get('visible') || !instance.get('blurHide')) {
+                return;
+            }
+
+            if (!instance._relativeElements) {
+                return;
+            }
+
+            // 遍历 _relativeElements ，当点击的元素落在这些元素上时，不处理
+            var i = 0, len = instance.relativeElements.length;
+            var el;
+            for (; i < len; i++) {
+                el = $(instance.relativeElements[i])[0];
+                if (el === event.target || $.contains(el, event.target)) {
+                    return;
+                }
+            }
+
+            // 到这里，判断触发了元素的 blur 事件，隐藏元素
+            instance.hide();
         });
     });
 
@@ -226,5 +275,9 @@ define(function(require, exports, module) {
         for (var i = 0, len = cahceOverlays.length; i < len; i++) {
             fn.call(cahceOverlays, cahceOverlays[i], i);
         }
+    }
+
+    function isArray(o) {
+        return $.isArray(o);
     }
 });
