@@ -31,12 +31,6 @@ define("matcha/overlay/1.0.0/overlay-debug", [ "jquery-debug", "matcha/widget/1.
         _setupShim: function() {
             var self = this;
             var iframeShim = new Iframeshim(self.$el);
-            // size改变时, 需重新定位
-            var resize = function() {
-                iframeShim.position();
-            };
-            self.on("change:width", resize);
-            self.on("change:height", resize);
             self._iframeShim = iframeShim;
         },
         /**
@@ -91,28 +85,30 @@ define("matcha/overlay/1.0.0/overlay-debug", [ "jquery-debug", "matcha/widget/1.
             arr.push(self.$el);
             self._relativeElements = arr;
         },
+        _onChangeWidth: function(val) {
+            var self = this;
+            self.$el.css("width", val);
+            self._iframeShim.position();
+        },
+        _onChangeHeight: function(val) {
+            var self = this;
+            self.$el.css("height", val);
+            self._iframeShim.position();
+        },
+        _onChangeZIndex: function(val) {
+            this.$el.css("zIndex", val);
+        },
+        _onChangeAlign: function() {
+            this._setPosition();
+        },
+        _onChangeVisible: function(val) {
+            this.$el[val ? "show" : "hide"]();
+        },
         setup: function() {
             var self = this;
             self._setupShim();
             // 加载 iframe 遮罩层并与 overlay 保持同步
             self._setupResize();
-            // 窗口resize时，重新定位浮层
-            // 属性更新操作
-            self.on("change:width", function(model, val) {
-                self.$el.css("width", val);
-            });
-            self.on("change:height", function(model, val) {
-                self.$el.css("height", val);
-            });
-            self.on("change:zIndex", function(model, val) {
-                self.$el.css("zIndex", val);
-            });
-            self.on("change:align", function() {
-                self._setPosition();
-            });
-            self.on("change:visible", function(model, val) {
-                self.$el[val ? "show" : "hide"]();
-            });
         },
         /**
          * 渲染组件
@@ -129,10 +125,6 @@ define("matcha/overlay/1.0.0/overlay-debug", [ "jquery-debug", "matcha/widget/1.
                     top: "-9999px"
                 });
             }
-            var overlayWidth = self.get("width");
-            overlayWidth && self.$el.css("width", overlayWidth);
-            var overlayHeight = self.get("height");
-            overlayHeight && self.$el.css("height", overlayHeight);
             return self;
         },
         /**
@@ -182,10 +174,7 @@ define("matcha/overlay/1.0.0/overlay-debug", [ "jquery-debug", "matcha/widget/1.
     $(document).on("mousedown", function(event) {
         eachOverlays(function(instance) {
             // 当实例为 空 或 隐藏 或 blurHide不启用 时，不处理
-            if (!instance || !instance.get("visible") || !instance.get("blurHide")) {
-                return;
-            }
-            if (!instance._relativeElements) {
+            if (!instance || !instance.get("visible") || !instance.get("blurHide") || !instance._relativeElements) {
                 return;
             }
             // 遍历 _relativeElements ，当点击的元素落在这些元素上时，不处理
@@ -228,8 +217,5 @@ define("matcha/overlay/1.0.0/overlay-debug", [ "jquery-debug", "matcha/widget/1.
         for (var i = 0, len = cahceOverlays.length; i < len; i++) {
             fn.call(cahceOverlays, cahceOverlays[i], i);
         }
-    }
-    function isArray(o) {
-        return $.isArray(o);
     }
 });

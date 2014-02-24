@@ -35,13 +35,6 @@ define(function(require, exports, module) {
 
             var iframeShim = new Iframeshim(self.$el);
 
-            // size改变时, 需重新定位
-            var resize = function() {
-                iframeShim.position();
-            };
-            self.on('change:width', resize);
-            self.on('change:height', resize);
-
             self._iframeShim = iframeShim;
         },
 
@@ -111,11 +104,19 @@ define(function(require, exports, module) {
         },
 
         _onChangeWidth: function(val) {
-            this.$el.css('width', val);
+            var self = this;
+
+            self.$el.css('width', val);
+
+            self._iframeShim.position();
         },
 
         _onChangeHeight: function(val) {
-            this.$el.css('height', val);
+            var self = this;
+
+            self.$el.css('height', val);
+
+            self._iframeShim.position();
         },
 
         _onChangeZIndex: function(val) {
@@ -221,11 +222,8 @@ define(function(require, exports, module) {
     $(document).on('mousedown', function(event) {
         eachOverlays(function(instance) {
             // 当实例为 空 或 隐藏 或 blurHide不启用 时，不处理
-            if (!instance || !instance.get('visible') || !instance.get('blurHide')) {
-                return;
-            }
-
-            if (!instance._relativeElements) {
+            if (!instance || !instance.get('visible') ||
+                !instance.get('blurHide') || !instance._relativeElements) {
                 return;
             }
 
@@ -275,9 +273,5 @@ define(function(require, exports, module) {
         for (var i = 0, len = cahceOverlays.length; i < len; i++) {
             fn.call(cahceOverlays, cahceOverlays[i], i);
         }
-    }
-
-    function isArray(o) {
-        return $.isArray(o);
     }
 });
