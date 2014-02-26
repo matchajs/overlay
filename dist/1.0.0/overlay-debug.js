@@ -178,10 +178,10 @@ define("matcha/overlay/1.0.0/overlay-debug", [ "jquery-debug", "matcha/widget/1.
                 return;
             }
             // 遍历 _relativeElements ，当点击的元素落在这些元素上时，不处理
-            var i = 0, len = instance.relativeElements.length;
+            var i = 0, len = instance._relativeElements.length;
             var el;
             for (;i < len; i++) {
-                el = $(instance.relativeElements[i])[0];
+                el = $(instance._relativeElements[i])[0];
                 if (el === event.target || $.contains(el, event.target)) {
                     return;
                 }
