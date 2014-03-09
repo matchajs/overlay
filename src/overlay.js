@@ -145,7 +145,7 @@ define(function(require, exports, module) {
         render: function() {
             var self = this;
 
-            Widget.prototype.render.apply(self, arguments);
+            Widget.prototype.render.apply(self);
 
             var position = self.$el.css('position');
             if (position === 'static' || position === 'relative') {
@@ -207,7 +207,7 @@ define(function(require, exports, module) {
                 }
             });
 
-            Widget.prototype.remove.apply(self, arguments);
+            Widget.prototype.remove.apply(self);
 
             return self;
         }
@@ -269,9 +269,9 @@ define(function(require, exports, module) {
     });
 
     function eachOverlays(fn) {
-        var cahceOverlays = Overlay.allOverlays;
-        for (var i = 0, len = cahceOverlays.length; i < len; i++) {
-            fn.call(cahceOverlays, cahceOverlays[i], i);
+        var cacheOverlays = Overlay.allOverlays;
+        for (var i = 0, len = cacheOverlays.length; i < len; i++) {
+            fn.call(cacheOverlays, cacheOverlays[i], i);
         }
     }
 });
